@@ -29,18 +29,20 @@ The databases are intentionally independent: separate ownership, access control,
 - Server Actions for all mutations (no separate API layer)
 - `postgres` (postgres.js) for database access, no ORM
 - `zod` for input validation
-- Tailwind CSS and shadcn/ui
-- PostgreSQL in Docker via `docker-compose.yml`
+- Tailwind CSS v4 with the design tokens in `app/globals.css`; UI components are hand-built (no component library)
+- PostgreSQL installed natively: one server, three databases, each owned by its own login role
 
 ## Repository layout
 
 ```
 media-db-ui/
 ├── CLAUDE.md
-├── docker-compose.yml
-├── db/init/        # SQL run on first container start: create DBs, tables, seed data
+├── .env.example    # connection URLs; copy to .env.local
+├── db/
+│   ├── setup.mjs   # creates roles + databases, then runs init/<key>.sql in each
+│   └── init/       # books.sql, movies.sql, games.sql: table and seed data
 ├── app/            # routes, pages, server actions
-├── components/     # app components; components/ui is shadcn-generated
+├── components/     # app components
 └── lib/            # db connections, schemas, shared logic
 ```
 
@@ -49,8 +51,7 @@ media-db-ui/
 Run all commands inside `media-db-ui/`.
 
 ```bash
-docker compose up -d          # start PostgreSQL
-docker compose down -v        # stop and wipe data, re-runs init scripts on next start
+npm run db:setup              # drop and recreate the three databases and seed them (destroys data)
 npm run dev                   # dev server
 npm run lint                  # lint
 npm run build                 # production build, also type-checks
@@ -63,7 +64,8 @@ Before declaring a task done, run `npm run lint` and `npm run build` and fix any
 - One postgres client per database, created once as a module-level singleton in `lib/`. In development, cache clients on `globalThis` so hot reload does not leak connections.
 - Database selection is a fixed allowlist (`"books" | "movies" | "games"`) validated with zod. Never build a connection string, database name, table name or column name from raw client input. Map the validated key to a predefined client and table config.
 - Always use postgres.js tagged templates for values (`` sql`... where id = ${id}` ``). Never concatenate SQL strings. Use `sql(identifier)` only with identifiers from the allowlisted config.
-- Schema and seed changes go into `db/init/*.sql`. Scripts are numbered (`01-`, `02-`, ...) and run in order. They only run on an empty volume, so document when `docker compose down -v` is needed.
+- Schema and seed changes go into `db/init/<key>.sql`, one file per database. They are applied by `npm run db:setup`, which recreates the database, so mention when a change requires re-running it.
+- Each database is owned by its own role, and `CONNECT` is revoked from `PUBLIC`, so one role cannot open another database. Keep it that way.
 
 ## Next.js conventions
 
@@ -78,7 +80,7 @@ Before declaring a task done, run `npm run lint` and `npm run build` and fix any
 
 - TypeScript strict mode. No `any`, no non-null assertions without a comment explaining why.
 - Prefer small, focused functions and components. Share the CRUD UI across the three databases through config rather than duplicating it per database.
-- Use shadcn/ui components from `components/ui` instead of hand-rolled equivalents. Do not rewrite generated shadcn files unless necessary.
+- Reuse the existing building blocks before writing new ones: `components/buttons.ts` for button styles, `components/modal.tsx` (native `<dialog>`) for dialogs, `components/icons.tsx` for icons, and the colour tokens (`bg-surface`, `text-fg-2`, `bg-accent`, ...) instead of raw colours.
 - Handle loading, empty and error states in the UI. Confirm deletions before executing them.
 - Keep comments for the "why", not the "what".
 
