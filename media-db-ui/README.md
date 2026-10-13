@@ -18,6 +18,10 @@ A web app for browsing and editing three separate PostgreSQL databases: **books*
 
 Next.js 16 (App Router, Server Components, Server Actions), TypeScript, Tailwind CSS v4, [postgres.js](https://github.com/porsager/postgres) and zod. All SQL uses parameterised tagged templates. Table and column names come from a fixed allowlist, never from user input.
 
+## Use of AI tools
+
+The UI design was partially made with [Claude Design](https://claude.ai/design) and the code partially with [Claude Code](https://claude.com/claude-code). All generated output was reviewed and edited by hand.
+
 ## Running it locally (Windows)
 
 1. **Install PostgreSQL.** Download the Windows installer (PostgreSQL 17) from <https://www.postgresql.org/download/windows/> and run it:
