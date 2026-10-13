@@ -1,26 +1,264 @@
 @import "tailwindcss";
 
+/* Dark mode follows the .dark class on <html>, set by the theme toggle. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --surface-hover: #e9ecf0;
+  --line: #e2e5ea;
+  --line-strong: #cbd0d8;
+  --fg: #14171c;
+  --fg-2: #454c57;
+  --fg-3: #5f6773;
+  --danger: #b42318;
+  --danger-fg: #ffffff;
+  --danger-soft: #fdecea;
+  --scrim: rgba(16, 19, 24, 0.36);
+  --toast-bg: #1a1e25;
+  --toast-fg: #f2f4f7;
+  --toast-ok: #5bc48a;
+  --toast-err: #f49283;
+  --elev-sm: 0 1px 2px rgba(16, 19, 24, 0.08);
+  --elev-lg: 0 24px 48px -12px rgba(16, 19, 24, 0.24), 0 2px 6px rgba(16, 19, 24, 0.06);
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0e1014;
+  --surface: #15181e;
+  --surface-2: #1b1f26;
+  --surface-hover: #232831;
+  --line: #262b34;
+  --line-strong: #363c47;
+  --fg: #e7eaef;
+  --fg-2: #b3bac5;
+  --fg-3: #8f97a4;
+  --danger: #f28b7d;
+  --danger-fg: #200a07;
+  --danger-soft: #3a1d1a;
+  --scrim: rgba(0, 0, 0, 0.55);
+  --toast-bg: #e7eaef;
+  --toast-fg: #14171c;
+  --toast-ok: #1f7a4a;
+  --toast-err: #b42318;
+  --elev-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --elev-lg: 0 24px 48px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px #262b34;
+  color-scheme: dark;
+}
+
+/* Each database has its own accent colour; set data-collection on any element. */
+[data-collection="books"] {
+  --accent: #b45309;
+  --accent-fg: #ffffff;
+  --accent-soft: #fdf1e4;
+  --accent-text: #9a4508;
+}
+[data-collection="movies"] {
+  --accent: #2f5bc7;
+  --accent-fg: #ffffff;
+  --accent-soft: #eaf0fc;
+  --accent-text: #2850b3;
+}
+[data-collection="games"] {
+  --accent: #6d45cf;
+  --accent-fg: #ffffff;
+  --accent-soft: #f1ecfc;
+  --accent-text: #5f3bba;
+}
+.dark [data-collection="books"] {
+  --accent: #f2a65a;
+  --accent-fg: #1c1206;
+  --accent-soft: #3a2a1a;
+  --accent-text: #f5b677;
+}
+.dark [data-collection="movies"] {
+  --accent: #86a8f7;
+  --accent-fg: #0b1430;
+  --accent-soft: #1c2740;
+  --accent-text: #9bb7f8;
+}
+.dark [data-collection="games"] {
+  --accent: #b9a0f8;
+  --accent-fg: #170d33;
+  --accent-soft: #2a2140;
+  --accent-text: #c6b2fa;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-hover: var(--surface-hover);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
+  --color-danger: var(--danger);
+  --color-danger-fg: var(--danger-fg);
+  --color-danger-soft: var(--danger-soft);
+  --color-toast-bg: var(--toast-bg);
+  --color-toast-fg: var(--toast-fg);
+  --color-toast-ok: var(--toast-ok);
+  --color-toast-err: var(--toast-err);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-text: var(--accent-text);
+  --shadow-elev-sm: var(--elev-sm);
+  --shadow-elev-lg: var(--elev-lg);
+  --font-sans: var(--font-plex-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, Menlo, monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+@layer components {
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--accent, var(--fg));
+    outline-offset: 2px;
+  }
+
+  .text-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--fg);
+    font: inherit;
+    font-size: 14px;
+  }
+  .text-input::placeholder {
+    color: var(--fg-3);
+    opacity: 1;
+  }
+  .text-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .text-input[aria-invalid="true"] {
+    border-color: var(--danger);
+  }
+  .text-input::-webkit-search-cancel-button {
+    display: none;
+  }
+
+  /* Records table: a grid on wide screens, two-line cards below 720px. */
+  .records-grid {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 2.4fr) minmax(0, 1.5fr) 96px 112px;
+    align-items: center;
+  }
+  .records-cell {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    height: 52px;
+    padding: 0 16px;
+  }
+  .records-head .records-cell {
+    height: 44px;
+  }
+
+  @media (max-width: 720px) {
+    .records-head {
+      display: none;
+    }
+    .records-grid {
+      grid-template-columns: fit-content(70%) minmax(0, 1fr) auto;
+      grid-template-areas: "title title actions" "field year actions";
+      row-gap: 2px;
+      padding: 12px 8px 12px 16px;
+    }
+    .records-cell {
+      height: auto;
+      padding: 0;
+    }
+    .cell-id {
+      display: none;
+    }
+    .cell-title {
+      grid-area: title;
+    }
+    .cell-field {
+      grid-area: field;
+      font-size: 13px;
+    }
+    .cell-year {
+      grid-area: year;
+      justify-content: flex-start;
+      font-size: 13px;
+      color: var(--fg-3);
+    }
+    .cell-year::before {
+      content: "·";
+      margin: 0 6px;
+    }
+    .cell-actions {
+      grid-area: actions;
+    }
+  }
+
+  /* Native <dialog> styling for the side panel and the delete confirmation. */
+  .dialog::backdrop {
+    background: var(--scrim);
+  }
+  .dialog-sheet {
+    margin: 0 0 0 auto;
+    width: 440px;
+    max-width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    animation: slide-in 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .dialog-center {
+    margin: auto;
+    width: 420px;
+    max-width: calc(100% - 32px);
+    animation: rise-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .rise-in {
+    animation: rise-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0.6;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog-sheet,
+  .dialog-center,
+  .rise-in {
+    animation: none;
+  }
 }
