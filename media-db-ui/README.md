@@ -14,9 +14,17 @@ A web app for browsing and editing three separate PostgreSQL databases: **books*
 - Each database is owned by its own login role (`books_owner`, `movies_owner`, `games_owner`). `CONNECT` is revoked from everyone else, so the books role cannot even open `movies_db`.
 - The app holds one connection pool per database, configured with its own URL. If one database is unreachable, only its tab shows an error; the other two keep working.
 
-## Tech
+## Tech stack
 
-Next.js 16 (App Router, Server Components, Server Actions), TypeScript, Tailwind CSS v4, [postgres.js](https://github.com/porsager/postgres) and zod. All SQL uses parameterised tagged templates. Table and column names come from a fixed allowlist, never from user input.
+- **Next.js 16**: App Router, Server Components, Server Actions
+- **React 19**
+- **TypeScript**
+- **Tailwind CSS v4**
+- **PostgreSQL 17**: three separate databases
+- **[postgres.js](https://github.com/porsager/postgres)**: database client, no ORM
+- **zod**: input validation
+
+All SQL uses parameterised queries. Table and column names come from a fixed allowlist, never from user input.
 
 ## Use of AI tools
 
