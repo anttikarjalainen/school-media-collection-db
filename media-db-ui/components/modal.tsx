@@ -17,6 +17,7 @@ type ModalProps = {
  */
 export function Modal({ onClose, className, role = "dialog", labelledBy, describedBy, children }: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const pressStartedOnBackdrop = useRef(false);
 
   useEffect(() => {
     const dialog = ref.current;
@@ -38,9 +39,16 @@ export function Modal({ onClose, className, role = "dialog", labelledBy, describ
         event.preventDefault();
         onClose();
       }}
+      onPointerDown={(event) => {
+        pressStartedOnBackdrop.current = event.target === event.currentTarget;
+      }}
       onClick={(event) => {
         // Clicks on the dialog element itself (not its content) come from the backdrop.
-        if (event.target === event.currentTarget) onClose();
+        // A drag that starts in the content and ends on the backdrop also fires a click
+        // on the dialog, so only close when the press started on the backdrop too.
+        const fromBackdrop = event.target === event.currentTarget && pressStartedOnBackdrop.current;
+        pressStartedOnBackdrop.current = false;
+        if (fromBackdrop) onClose();
       }}
     >
       {children}
