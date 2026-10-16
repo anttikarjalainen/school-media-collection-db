@@ -28,7 +28,7 @@ All SQL uses parameterised queries. Table and column names come from a fixed all
 
 ## Use of AI tools
 
-The UI design was partially made with [Claude Design](https://claude.ai/design) and the code partially with [Claude Code](https://claude.com/claude-code). All generated output was reviewed and edited by hand.
+The UI design was mostly made with [Claude Design](https://claude.ai/design) and the code with [Claude Code](https://claude.com/claude-code). All generated output was reviewed and edited by hand.
 
 ## Running it locally (Windows)
 
